@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,19 +8,22 @@ datasource db {
 }
 
 model Event {
-  id        Int      @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   name      String
-  createdAt DateTime @default(dbgenerated("CURRENT_TIMESTAMP"))
+  createdAt DateTime   @default(now())
+  workshops Workshop[]
 
   @@map("events")
 }
 
 model MenuItem {
-  id        Int      @id @default(autoincrement())
-  name      String
-  url       String
-  parentId  Int?
-  createdAt DateTime @default(dbgenerated("CURRENT_TIMESTAMP"))
+  id               Int        @id @default(autoincrement())
+  name             String
+  url              String
+  parentId         Int?
+  createdAt        DateTime   @default(now())
+  parentChildren   MenuItem?  @relation("childrenTochildren", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  children    MenuItem[] @relation("childrenTochildren")
 
   @@map("menu_items")
 }
@@ -32,9 +32,16 @@ model Workshop {
   id        Int      @id @default(autoincrement())
   name      String
   eventId   Int
-  createdAt DateTime @default(dbgenerated("CURRENT_TIMESTAMP"))
+  createdAt DateTime @default(now())
   start     DateTime
   end       DateTime
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@map("workshops")
+}
+
+model migrations {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique(map: "sqlite_autoindex_migrations_1")
+  createdAt DateTime @default(now())
 }

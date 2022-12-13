@@ -88,7 +88,11 @@ export class EventsService {
 
   @Get('events')
   async getEventsWithWorkshops() {
-    throw new Error('TODO task 1');
+    return this.prisma.event.findMany({
+      include: {
+        workshops: true,
+      },
+    });
   }
 
   /* TODO: complete getFutureEventWithWorkshops so that it returns events with workshops, that have not yet started
@@ -159,6 +163,17 @@ export class EventsService {
      */
   @Get('futureevents')
   async getFutureEventWithWorkshops() {
-    throw new Error('TODO task 2');
+    return this.prisma.event.findMany({
+      where: {
+        workshops: {
+          some: {
+            start: { gte: new Date() },
+          },
+        },
+      },
+      include: {
+        workshops: true,
+      },
+    });
   }
 }

@@ -81,6 +81,12 @@ export class MenuItemsService {
     ]
   */
   async getMenuItems() {
-    throw new Error('TODO in task 3');
+    // MARK: Prisma doesn't support this yet - https://github.com/prisma/prisma/discussions/10549
+    // Will probably have to use a recursive raw query for this.
+    return this.prisma.menuItem.findMany({
+      include: {
+        children: true,
+      },
+    });
   }
 }
